@@ -14,6 +14,13 @@ public class ProductRepository : Repository<Product>, IProductRepository
         _dbSet = context.Set<Product>();
     }
 
+
+    /// <summary>
+    /// Gets a Product by its name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Product?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _dbSet.FirstOrDefaultAsync(x => x.Name == name,

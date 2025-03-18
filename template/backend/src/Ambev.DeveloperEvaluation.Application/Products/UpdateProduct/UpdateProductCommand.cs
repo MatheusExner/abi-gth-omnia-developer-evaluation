@@ -19,6 +19,11 @@ namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 public class UpdateProductCommand : IRequest<UpdateProductResult>
 {
     /// <summary>
+    /// The produt Id to be updated.
+    /// </summary>
+    public Guid Id { get; set; } 
+
+    /// <summary>
     /// Gets or sets the product name of the product to be updated.
     /// </summary>
     public string Name { get; set; } = string.Empty;

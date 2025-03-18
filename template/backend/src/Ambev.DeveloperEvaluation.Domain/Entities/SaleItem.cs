@@ -10,6 +10,9 @@ public class SaleItem : BaseEntity
     public decimal Discount { get; private set; }
     public decimal TotalPrice => (UnitPrice * Quantity) - Discount;
 
+    /// <summary>
+    /// Apply discount to the SaleItem based on the quantity
+    /// </summary>
     public void ApplyDiscount()
     {
         if (Quantity >= 10 && Quantity <= 20)

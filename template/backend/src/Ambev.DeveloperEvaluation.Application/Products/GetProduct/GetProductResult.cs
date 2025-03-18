@@ -15,4 +15,9 @@ public class GetProductResult
     /// The Product's name
     /// </summary>
     public string Name { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// The Product's price
+    /// </summary>
+    public decimal Price { get; set; }
 }

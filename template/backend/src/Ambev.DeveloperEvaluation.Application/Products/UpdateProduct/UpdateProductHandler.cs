@@ -44,9 +44,15 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
         if (existingProduct != null)
             throw new InvalidOperationException($"Product with name {command.Name} already exists");
 
-        var Product = _mapper.Map<Product>(command);
+        var product = await  _productRepository.GetByIdAsync(command.Id, cancellationToken);
+        if (product == null)
+            throw new InvalidOperationException($"Product with id {command.Id} not found");
 
-        var updatedProduct = await _productRepository.UpdateAsync(Product, cancellationToken);
+        // Update the product details
+        product.Name = command.Name;
+        product.Price = command.Price;
+
+        var updatedProduct = await _productRepository.UpdateAsync(product, cancellationToken);
         var result = _mapper.Map<UpdateProductResult>(updatedProduct);
         return result;
     }
