@@ -42,13 +42,18 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
     /// <param name="command">The CreateSale command</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created Sale details</returns>
-    public async Task<CreateSaleResult> Handle(CreateSaleCommand command, CancellationToken cancellationToken)
+    public async Task<UpdateSaleResult> Handle(UpdateSaleCommand command, CancellationToken cancellationToken)
     {
-        var validator = new CreateSaleCommandValidator();
+        var validator = new UpdateSaleCommandValidator();
         var validationResult = await validator.ValidateAsync(command, cancellationToken);
 
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
+
+
+        var sale = await _saleRepository.GetByIdAsync(command.Id);
+        if (sale == null)
+            throw new InvalidOperationException($"Sale with id {command.Id} not found");
 
         var customer = await _customerRepository.GetByIdAsync(command.CustomerId, cancellationToken);
         if (customer == null)
@@ -67,15 +72,13 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
             saleItems.Add(saleItem);
         }
 
-        var sale = _mapper.Map<Sale>(command);
-
         sale.Branch = branch;
         sale.Customer = customer;
         sale.Items = saleItems;
 
-        var createdSale = await _saleRepository.AddAsync(sale, cancellationToken);
+        var createdSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
 
-        var result = _mapper.Map<CreateSaleResult>(createdSale);
+        var result = _mapper.Map<UpdateSaleResult>(createdSale);
 
         return result;
     }

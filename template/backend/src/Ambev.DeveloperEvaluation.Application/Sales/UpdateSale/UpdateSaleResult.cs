@@ -1,4 +1,6 @@
-﻿namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+
+namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
 /// <summary>
 /// Represents the response returned after successfully creating a new Sale.
@@ -10,10 +12,42 @@
 public class UpdateSaleResult
 {
     /// <summary>
-    /// Gets or sets the unique identifier of the newly created Sale.
+    /// The unique identifier of the Sale
     /// </summary>
-    /// <value>A GUID that uniquely identifies the created Sale in the system.</value>
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public decimal Price { get; set; }
+
+    /// <summary>
+    /// The Sale number
+    /// </summary>
+    public int SaleNumber { get; set; }
+
+    /// <summary>
+    /// The date and time when the Sale was created
+    /// </summary>
+    public DateTime SaleDate { get; set; } 
+
+    /// <summary>
+    /// The Customer who made the Sale
+    /// </summary>
+    public Customer Customer { get; set; } = null!;
+
+    /// <summary>
+    /// The Branch where the Sale was made
+    /// </summary>
+    public Branch Branch { get; set; } = null!;
+
+    /// <summary>
+    /// The list of items sold in the Sale
+    /// </summary>
+    public List<SaleItem> Items { get; set; } = [];
+
+    /// <summary>
+    /// The total amount of the Sale
+    /// </summary>
+    public decimal TotalAmount { get; set; } = 0;
+
+    /// <summary>
+    /// Indicates whether the Sale was cancelled
+    /// </summary>
+    public bool IsCancelled { get; private set; } = false;
 }

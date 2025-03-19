@@ -19,6 +19,11 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 public class UpdateSaleCommand : IRequest<UpdateSaleResult>
 {
     /// <summary>
+    /// The Id of the sale { get; set; }
+    /// </summary>
+    public Guid Id { get; set; }
+
+    /// <summary>
     /// The customer Id of the sale.
     /// </summary>
     public Guid CustomerId { get; set; }
