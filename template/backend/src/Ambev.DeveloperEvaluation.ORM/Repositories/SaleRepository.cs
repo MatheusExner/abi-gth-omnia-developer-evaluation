@@ -27,4 +27,18 @@ public class SaleRepository : Repository<Sale>, ISaleRepository
             .ThenInclude(x => x.Product)
             .AsQueryable();
     }
+
+    /// <summary>
+    /// Gets a Sale by its ID, including its Customer, Branch and Items
+    /// </summary>
+    /// <returns>A Sale</returns>
+    public new async Task<Sale> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(x => x.Customer)
+            .Include(x => x.Branch)
+            .Include(x => x.Items)
+            .ThenInclude(x => x.Product)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }
