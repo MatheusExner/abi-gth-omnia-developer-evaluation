@@ -3,6 +3,7 @@ using MediatR;
 using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
@@ -15,6 +16,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
     private readonly ICustomerRepository _customerRepository;
     private readonly IBranchRepository _branchRepository;
     private readonly ISaleItemRepository _saleItemRepository;
+    private readonly IMessagePublisher _messagePublisher;
     private readonly IMapper _mapper;
 
     /// <summary>
@@ -27,12 +29,14 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
     ICustomerRepository customerRepository,
     IBranchRepository branchRepository,
     ISaleItemRepository saleItemRepository,
+    IMessagePublisher messagePublisher,
      IMapper mapper)
     {
         _saleRepository = saleRepository;
         _customerRepository = customerRepository;
         _branchRepository = branchRepository;
         _saleItemRepository = saleItemRepository;
+        _messagePublisher = messagePublisher;
         _mapper = mapper;
     }
 
@@ -49,7 +53,6 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
 
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
-
 
         var sale = await _saleRepository.GetByIdAsync(command.Id);
         if (sale == null)
@@ -76,9 +79,11 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
         sale.Customer = customer;
         sale.Items = saleItems;
 
-        var createdSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
+        var updatedSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
 
-        var result = _mapper.Map<UpdateSaleResult>(createdSale);
+        _messagePublisher.Publish(updatedSale, "sale.updated");
+
+        var result = _mapper.Map<UpdateSaleResult>(updatedSale);
 
         return result;
     }
